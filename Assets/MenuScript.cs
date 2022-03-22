@@ -31,7 +31,10 @@ public class MenuScript : MonoBehaviour
         {
             opened = false;
             Menu.SetActive(false);
-            Timer.GetComponent<Timer>().counting = true;
+            if(GS.GetComponent<GameScript>().generated == true && GS.GetComponent<GameScript>().firstclick == 1)
+            {
+                Timer.GetComponent<Timer>().counting = true;
+            }
         }
         else
         {
