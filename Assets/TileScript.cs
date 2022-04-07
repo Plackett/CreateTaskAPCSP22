@@ -16,9 +16,11 @@ public class TileScript : MonoBehaviour
 	public int x;
 	public int y;
 	public bool BChecked;
+    public bool theweakestlink;
 	public Button tile;
 	public Text txt;
 	public GameObject self;
+    public int color;
 	public bool flagged;
 	public Sprite[] Sprites = new Sprite[10];
 	public Sprite Spriteempty;
@@ -27,6 +29,27 @@ public class TileScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(color == 1 || color == 2)
+        {
+            if(color == 2)
+            {
+                tile.GetComponent<Image>().color = new Color(0, 255, 0);
+            }
+            if(color == 1)
+            {
+                if(theweakestlink == true)
+                {
+                    tile.GetComponent<Image>().color = new Color(255, 255, 0);
+                } else
+                {
+                    tile.GetComponent<Image>().color = new Color(50, 0, 0);
+                }
+            }
+        }
+        if(color == 0)
+        {
+            tile.GetComponent<Image>().color = new Color(255, 255, 255);
+        }
 		if (open == true)
 		{
 			tile.GetComponent<Button>().interactable = false;

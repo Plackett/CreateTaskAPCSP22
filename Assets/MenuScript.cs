@@ -22,7 +22,7 @@ public class MenuScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        Menu.transform.SetAsLastSibling();
     }
 
     public void MenuOpen()
@@ -39,7 +39,6 @@ public class MenuScript : MonoBehaviour
         else
         {
             opened = true;
-            Menu.transform.SetAsLastSibling();
             Menu.SetActive(true);
             Timer.GetComponent<Timer>().counting = false;
         }

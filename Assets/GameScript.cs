@@ -20,6 +20,10 @@ public class GameScript : MonoBehaviour
     private TextMeshProUGUI Flagcount;
     private TextMeshProUGUI Timertext;
     public int firstclick;
+    private bool minesetted;
+    public bool immortality;
+    public GameObject ach;
+    public GameObject ach1;
 
     void Start()
     {
@@ -31,6 +35,33 @@ public class GameScript : MonoBehaviour
         Timertext = Timer.GetComponent<TextMeshProUGUI>();
         btn.GetComponent<Menu>().setReference(this);
         BoardSetup(width, height, mines);
+    }
+
+    // fix resolution to 31 by 27 by not allowing you to change window size
+    void Update()
+    {
+
+        // cheats
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            if (immortality == false)
+            {
+                immortality = true;
+                ach.transform.SetAsLastSibling();
+                LeanTween.moveX(ach.GetComponent<RectTransform>(), 300f, 1f).setDelay(0f);
+                LeanTween.moveX(ach.GetComponent<RectTransform>(), 941f, 1f).setDelay(5f);
+            }
+            else
+            {
+                if (immortality == true)
+                {
+                    immortality = false;
+                    ach1.transform.SetAsLastSibling();
+                    LeanTween.moveX(ach1.GetComponent<RectTransform>(), 300f, 1f).setDelay(0f);
+                    LeanTween.moveX(ach1.GetComponent<RectTransform>(), 941f, 1f).setDelay(5f);
+                }
+            }
+        }
     }
 
     public void ChangeFlags(int flg)
@@ -58,6 +89,8 @@ public class GameScript : MonoBehaviour
         Flagcount = Flags.GetComponent<TextMeshProUGUI>();
         generated = false;
         Flagcount.text = "000";
+        Timer.GetComponent<Timer>().time = 0;
+        minesetted = false;
         for(var c = 0; c < width; c++)
         {
             for(var f = 0; f < height; f++)
@@ -99,20 +132,29 @@ public class GameScript : MonoBehaviour
                 board[i][v] = temp;
             }
         }
-        // sets mines
-        mineSet();
+       // DON'T SET MINES TILL AFTER FIRST CLICK
     }
 
     public void mineSet()
     {
-        for (var m = 0; m < mines;)
+        // minesetted variable is so that it can only generate mines ONCE
+        if(minesetted == false)
         {
-            var test = Random.Range(0, width);
-            var test2 = Random.Range(0, height);
-            if (board[test][test2].GetComponent<TileScript>().mined == false && board[test][test2].GetComponent<TileScript>().open == false)
+            minesetted = true;
+            for (var m = 0; m < mines;)
             {
-                board[test][test2].GetComponent<TileScript>().mined = true;
-                m++;
+                var number = Random.Range(0, width);
+                var number2 = Random.Range(0, height);
+                var test = number;
+                var test2 = number2;
+                if (board[(int) test][(int) test2].GetComponent<TileScript>().mined == false && board[(int) test][(int) test2].GetComponent<TileScript>().open == false)
+                {
+                    //Debug.Log("rand" + number);
+                    //Debug.Log("mined" + test);
+                    //Debug.Log("minedy" + test2);
+                    board[(int)test][(int)test2].GetComponent<TileScript>().mined = true;
+                    m++;
+                }
             }
         }
     }
@@ -140,7 +182,7 @@ public class GameScript : MonoBehaviour
                 {
                     if(board[newx][newy].GetComponent<TileScript>().mined == true)
                     {
-                        Debug.Log("minecount");
+                        //Debug.Log("minecount");
                         minecount = minecount + 1;
                     }
                 }
@@ -151,7 +193,7 @@ public class GameScript : MonoBehaviour
 
     public bool mineCheck(int x, int y, int width, int height)
     {
-        Debug.Log(new string(x + "hey" + width));
+        //Debug.Log(new string(x + "hey" + width));
         if (x >= 0 && y >= 0 && x < width && y < height)
         {
             return true;
@@ -161,7 +203,7 @@ public class GameScript : MonoBehaviour
         }
     }
 
-    public void End()
+    public void End(bool win)
     {
         Timer.GetComponent<Timer>().counting = false;
         for (var n = 0; n < width; n++)
@@ -169,9 +211,31 @@ public class GameScript : MonoBehaviour
             for (var m = 0; m < height; m++)
             {
                 board[n][m].GetComponent<TileScript>().tile.GetComponent<Button>().interactable = false;
+                board[n][m].GetComponent<TileScript>().tile.GetComponent<Button>().GetComponent<InputHandler>().enabled = false;
                 if (board[n][m].GetComponent<TileScript>().mined == true)
                 {
                     board[n][m].GetComponent<TileScript>().open = true;
+                }
+            }
+        }
+        if(win == false)
+        {
+            AnimEnd(1);
+        } else
+        {
+            AnimEnd(2);
+        }
+    }
+
+    public void AnimEnd(int win)
+    {
+        for(var g = 0; g < width; g++)
+        {
+            for(var h = 0; h < height; h++)
+            {
+                if(board[g][h].GetComponent<TileScript>().mined == true)
+                {
+                    board[g][h].GetComponent<TileScript>().color = win;
                 }
             }
         }
@@ -179,20 +243,20 @@ public class GameScript : MonoBehaviour
 
     public void endcheck()
     {
-        int minesleft = 0;
+        int tilesflagged = 0;
         for (var y = 0; y < width; y++)
         {
             for (var aa = 0; aa < height; aa++)
             {
-                if(board[y][aa].GetComponent<TileScript>().open == true && board[y][aa].GetComponent<TileScript>().mined == false)
+                if(board[y][aa].GetComponent<TileScript>().flagged == true && board[y][aa].GetComponent<TileScript>().mined == true)
                 {
-                    minesleft++;
+                    tilesflagged++;
                 }
             }
         }
-        if(minesleft == 0)
+        if(tilesflagged == mines)
         {
-            End();
+            End(true);
         }
     }
 

@@ -23,10 +23,14 @@ public class InputHandler : MonoBehaviour, IPointerClickHandler
 			Debug.Log("Passed 2");
 			if (tiles.mined == true)
 			{
-				tiles.open = true;
-				tiles.tile.GetComponent<Image>().sprite = tiles.Sprites[0];
-				tiles.gamescript.End();
-			}
+                if(tiles.gamescript.immortality == false)
+                {
+                    tiles.open = true;
+                    tiles.tile.GetComponent<Image>().sprite = tiles.Sprites[0];
+                    tiles.gamescript.End(false);
+                    tiles.theweakestlink = true;
+                }
+            }
 			else
 			{
 				if (tiles.flagged == false)
