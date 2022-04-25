@@ -8,19 +8,13 @@ public class Timer : MonoBehaviour
     public bool counting;
     public float time;
     public GameObject GS;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
     void Update()
     {
-        if(counting == true)
+        if(counting == true) // make a way to stop the timer
         {
-            time += Time.deltaTime;
-            GS.GetComponent<GameScript>().UpdateTimer((int)time);
+            time += Time.deltaTime; //adds time every realtime second
+            GS.GetComponent<GameScript>().UpdateTimer((int)time); // updates timer when time is updated
         }
     }
 }

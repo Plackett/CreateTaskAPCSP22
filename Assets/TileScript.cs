@@ -26,7 +26,7 @@ public class TileScript : MonoBehaviour
 	public Sprite Spriteempty;
 	public bool gameover;
 
-    // Update is called once per frame
+    // checks variables effected by ending animation function
     void Update()
     {
         if(color == 1 || color == 2)
@@ -66,6 +66,7 @@ public class TileScript : MonoBehaviour
 		}
 	}
 
+    //updates the tile if it has been clicked
 	public void updatetile()
     {
 		BChecked = true;

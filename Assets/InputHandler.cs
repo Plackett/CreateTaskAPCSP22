@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class InputHandler : MonoBehaviour, IPointerClickHandler
+public class InputHandler : MonoBehaviour, IPointerClickHandler //handles click inputs from client
 {
 	public GameObject tileparent;
 	public TileScript tiles;
@@ -17,10 +17,10 @@ public class InputHandler : MonoBehaviour, IPointerClickHandler
 
     public void functionss(PointerEventData eventData)
     {
-		Debug.Log("Passed");
+		//Debug.Log("Passed"); user click detected
 		if (eventData.button == PointerEventData.InputButton.Left)
 		{
-			Debug.Log("Passed 2");
+			//Debug.Log("Passed 2"); if its a left click
 			if (tiles.mined == true)
 			{
                 if(tiles.gamescript.immortality == false)
@@ -35,7 +35,7 @@ public class InputHandler : MonoBehaviour, IPointerClickHandler
 			{
 				if (tiles.flagged == false)
                 {
-					Debug.Log("Passed 3");
+					//Debug.Log("Passed 3"); if its a right click
 					tiles.open = true;
 					tiles.updatetile();
 				}
@@ -45,7 +45,7 @@ public class InputHandler : MonoBehaviour, IPointerClickHandler
 		{
 			if (tiles.open == false && tiles.flagged == false)
 			{
-				Debug.Log("FLAGGED");
+				//Debug.Log("FLAGGED"); if the tile target has been flagged
 				tiles.gamescript.UpdateInputHandlers(flagsleft - 1);
 				tiles.gamescript.ChangeFlags(flagsleft);
 				tiles.flagged = true;
@@ -55,7 +55,7 @@ public class InputHandler : MonoBehaviour, IPointerClickHandler
             {
 				if(tiles.flagged == true)
                 {
-					Debug.Log("deFLAGGED");
+					//Debug.Log("deFLAGGED"); if the tile target is already flagged
 					tiles.gamescript.UpdateInputHandlers(flagsleft + 1);
 					tiles.gamescript.ChangeFlags(flagsleft);
 					tiles.flagged = false;
@@ -66,20 +66,14 @@ public class InputHandler : MonoBehaviour, IPointerClickHandler
 		}
 	}
 
-	// Start is called before the first frame update
+    public void UpdateFlg()
+    {
+        flagsleft = tiles.gamescript.mines;
+    }
+
+	// set tile reference
 	void Start()
     {
         tiles = tileparent.GetComponent<TileScript>();
 	}
-
-	public void UpdateFlg()
-    {
-		flagsleft = tiles.gamescript.mines;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

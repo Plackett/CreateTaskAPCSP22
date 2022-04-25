@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class GameScript : MonoBehaviour
+public class GameScript : MonoBehaviour // main game control
 {
     public int width;
     public int height;
@@ -22,10 +22,11 @@ public class GameScript : MonoBehaviour
     public int firstclick;
     private bool minesetted;
     public bool immortality;
+    public bool gamehasended;
     public GameObject ach;
     public GameObject ach1;
 
-    void Start()
+    void Start() // sets a default size of the maximum size you can do with the window size and resets everything
     {
         width = 30;
         height = 24;
@@ -33,11 +34,11 @@ public class GameScript : MonoBehaviour
         firstclick = 0;
         Flagcount = Flags.GetComponent<TextMeshProUGUI>();
         Timertext = Timer.GetComponent<TextMeshProUGUI>();
-        btn.GetComponent<Menu>().setReference(this);
-        BoardSetup(width, height, mines);
+        btn.GetComponent<Menu>().setReference(this); // updates references in menu script
+        BoardSetup(width, height, mines); // generates a board
     }
 
-    // fix resolution to 31 by 27 by not allowing you to change window size
+    // called every frame, checks for cheats
     void Update()
     {
 
@@ -64,7 +65,7 @@ public class GameScript : MonoBehaviour
         }
     }
 
-    public void ChangeFlags(int flg)
+    public void ChangeFlags(int flg) // sets the flag counter to be in the correct format and also display an accurate number based on real time measurements
     {
         Flagcount.text = flg.ToString("D3");
         for(var h = 0; h < width; h++)
@@ -76,7 +77,7 @@ public class GameScript : MonoBehaviour
         }
     }
 
-    public void UpdateTimer(float time)
+    public void UpdateTimer(float time) // updates the time counter display using time script variables
     {
         if(time <= 999)
         {
@@ -84,9 +85,10 @@ public class GameScript : MonoBehaviour
         }
     }
 
-    public void ClearBoard()
+    public void ClearBoard() //clears the board
     {
         Flagcount = Flags.GetComponent<TextMeshProUGUI>();
+        gamehasended = false;
         generated = false;
         Flagcount.text = "000";
         Timer.GetComponent<Timer>().time = 0;
@@ -105,13 +107,14 @@ public class GameScript : MonoBehaviour
     public void BoardSetup(int width, int height, int mines)
     {
         Timertext.text = "000";
+        gamehasended = false;
         firstclick = 0;
         Timer.GetComponent<Timer>().counting = false;
         Flagcount = Flags.GetComponent<TextMeshProUGUI>();
         generated = true;
         Flagcount.text = mines.ToString("D3");
         board = new GameObject[width][];
-        for(var t = 0; t < width; t++)
+        for(var t = 0; t < width; t++) // makes every value in the array another array of gameobjects
         {
             board[t] = new GameObject[height];
         }
@@ -135,7 +138,7 @@ public class GameScript : MonoBehaviour
        // DON'T SET MINES TILL AFTER FIRST CLICK
     }
 
-    public void mineSet()
+    public void mineSet(int mines)
     {
         // minesetted variable is so that it can only generate mines ONCE
         if(minesetted == false)
@@ -149,9 +152,9 @@ public class GameScript : MonoBehaviour
                 var test2 = number2;
                 if (board[(int) test][(int) test2].GetComponent<TileScript>().mined == false && board[(int) test][(int) test2].GetComponent<TileScript>().open == false)
                 {
-                    //Debug.Log("rand" + number);
-                    //Debug.Log("mined" + test);
-                    //Debug.Log("minedy" + test2);
+                    //Debug.Log("rand" + number); testing
+                    //Debug.Log("mined" + test); purposes
+                    //Debug.Log("minedy" + test2); only
                     board[(int)test][(int)test2].GetComponent<TileScript>().mined = true;
                     m++;
                 }
@@ -164,7 +167,7 @@ public class GameScript : MonoBehaviour
         if (firstclick == 0)
         {
             firstclick = 1;
-            mineSet();
+            mineSet(mines);
             Timer.GetComponent<Timer>().counting = true;
         }
         int posx = obj.GetComponent<TileScript>().x;
@@ -182,7 +185,7 @@ public class GameScript : MonoBehaviour
                 {
                     if(board[newx][newy].GetComponent<TileScript>().mined == true)
                     {
-                        //Debug.Log("minecount");
+                        //Debug.Log("minecount"); testing
                         minecount = minecount + 1;
                     }
                 }
@@ -193,7 +196,7 @@ public class GameScript : MonoBehaviour
 
     public bool mineCheck(int x, int y, int width, int height)
     {
-        //Debug.Log(new string(x + "hey" + width));
+        //Debug.Log(new string(x + "hey" + width)); distinguishing comments
         if (x >= 0 && y >= 0 && x < width && y < height)
         {
             return true;
@@ -203,8 +206,9 @@ public class GameScript : MonoBehaviour
         }
     }
 
-    public void End(bool win)
+    public void End(bool win) // ends the game
     {
+        gamehasended = true;
         Timer.GetComponent<Timer>().counting = false;
         for (var n = 0; n < width; n++)
         {
@@ -218,10 +222,10 @@ public class GameScript : MonoBehaviour
                 }
             }
         }
-        if(win == false)
+        if(win == false) // if you lost
         {
             AnimEnd(1);
-        } else
+        } else // if you won
         {
             AnimEnd(2);
         }

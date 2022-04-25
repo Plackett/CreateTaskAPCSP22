@@ -13,25 +13,26 @@ public class MenuScript : MonoBehaviour
     public GameObject Timer;
     public GameObject Mines;
     bool opened;
-    // Start is called before the first frame update
+
+    // start of the game closes menu
     void Start()
     {
         opened = false;
     }
 
-    // Update is called once per frame
+    // MAKE IT ACTUALLY VISIBLE
     void Update()
     {
         Menu.transform.SetAsLastSibling();
     }
 
-    public void MenuOpen()
+    public void MenuOpen() // opens menu up when clicked
     {
         if (opened == true)
         {
             opened = false;
             Menu.SetActive(false);
-            if(GS.GetComponent<GameScript>().generated == true && GS.GetComponent<GameScript>().firstclick == 1)
+            if(GS.GetComponent<GameScript>().generated == true && GS.GetComponent<GameScript>().firstclick == 1 && GS.GetComponent<GameScript>().gamehasended == false)
             {
                 Timer.GetComponent<Timer>().counting = true;
             }
@@ -44,6 +45,7 @@ public class MenuScript : MonoBehaviour
         }
     }
 
+    // preset sizes
     public void Beginner()
     {
         GS.GetComponent<GameScript>().ClearBoard();
@@ -74,7 +76,8 @@ public class MenuScript : MonoBehaviour
         GS.GetComponent<GameScript>().BoardSetup(30, 16, 99);
         MenuOpen();
     }
-
+    
+    // custom size set by client
     public void Custom()
     {
         GS.GetComponent<GameScript>().ClearBoard();
@@ -84,7 +87,7 @@ public class MenuScript : MonoBehaviour
         bool tw = int.TryParse(Width.GetComponent<TMP_InputField>().text, out w);
         bool th = int.TryParse(Height.GetComponent<TMP_InputField>().text, out h);
         bool tm = int.TryParse(Mines.GetComponent<TMP_InputField>().text, out m);
-        if (tw == true && th == true && tm == true)
+        if (tw == true && th == true && tm == true) // makes sure the number is in the right size range
         {
             if(w > 30)
             {
