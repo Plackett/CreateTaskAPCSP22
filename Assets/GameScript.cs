@@ -252,13 +252,13 @@ public class GameScript : MonoBehaviour // main game control
         {
             for (var aa = 0; aa < height; aa++)
             {
-                if(board[y][aa].GetComponent<TileScript>().flagged == true && board[y][aa].GetComponent<TileScript>().mined == true)
+                if(board[y][aa].GetComponent<TileScript>().open == true && board[y][aa].GetComponent<TileScript>().mined == false)
                 {
                     tilesflagged++;
                 }
             }
         }
-        if(tilesflagged == mines)
+        if(tilesflagged == ((width*height) - mines))
         {
             End(true);
         }
